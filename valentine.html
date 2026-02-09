@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For My Girl ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --pink-envelope: #f08080;
+            --pink-flap: #e56b6f;
+            --heart-red: #d90429;
+        }
+
+        body {
+            margin: 0; padding: 0; display: flex; justify-content: center; align-items: center;
+            height: 100vh; width: 100vw; background: linear-gradient(-45deg, #ffc8dd, #ffafcc, #bde0fe, #a2d2ff);
+            background-size: 400% 400%; animation: gradientBG 15s ease infinite;
+            font-family: 'Quicksand', sans-serif; overflow: hidden; touch-action: none;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- HEART TRAIL STYLE --- */
+        .cursor-heart {
+            position: absolute; color: var(--heart-red); pointer-events: none;
+            font-size: 20px; animation: heartFade 1s ease-out forwards; z-index: 1000000;
+        }
+        @keyframes heartFade { 
+            0% { opacity: 1; transform: translateY(0) scale(1); } 
+            100% { opacity: 0; transform: translateY(-50px) scale(1.5); } 
+        }
+
+        .heart-particle {
+            position: absolute; bottom: -10%; color: rgba(255, 255, 255, 0.6);
+            user-select: none; pointer-events: none; animation: floatUp linear infinite; z-index: 1;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .envelope-wrapper {
+            position: relative; width: 300px; height: 200px;
+            background-color: var(--pink-envelope); border-radius: 0 0 10px 10px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.15); cursor: pointer; z-index: 10;
+        }
+
+        .envelope-flap {
+            position: absolute; top: 0; left: 0; border-top: 110px solid var(--pink-flap);
+            border-left: 150px solid transparent; border-right: 150px solid transparent;
+            transform-origin: top; transition: transform 0.6s ease; z-index: 30;
+        }
+
+        .envelope-front {
+            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+            border-right: 150px solid var(--pink-envelope); border-bottom: 100px solid var(--pink-envelope);
+            border-left: 150px solid #f4978e; border-top: 100px solid transparent;
+            border-radius: 0 0 10px 10px; z-index: 25;
+        }
+
+        .letter {
+            position: absolute; bottom: 5px; left: 10px; width: 280px; height: 180px;
+            background: #fff; border-radius: 5px; padding: 20px; box-sizing: border-box;
+            text-align: center; z-index: 20; opacity: 0; visibility: hidden;
+            transition: transform 0.8s ease, opacity 0.3s ease;
+        }
+
+        .letter h1 {
+            font-family: 'Dancing Script', cursive; color: var(--heart-red);
+            font-size: 1.6rem; margin: 0;
+        }
+
+        .open .envelope-flap { transform: rotateX(180deg); z-index: 15; }
+
+        .open .letter {
+            transform: translateY(-150px); /* Lifted higher */
+            opacity: 1; visibility: visible;
+            height: 300px; /* Taller for all elements */
+            z-index: 40; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .btn-group { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px; }
+
+        button {
+            padding: 12px 25px; border: none; border-radius: 50px;
+            font-weight: 600; cursor: pointer; font-family: 'Quicksand', sans-serif;
+            touch-action: manipulation;
+        }
+
+        #yesBtn { background-color: var(--heart-red); color: white; font-size: 1.2rem; box-shadow: 0 5px 15px rgba(217, 4, 41, 0.3); z-index: 50; }
+        #noBtn { background-color: #f1f1f1; color: #888; transition: left 0.3s ease, top 0.3s ease; z-index: 50; }
+
+        .hidden { display: none; }
+        .cute-gif { width: 180px; margin-top: 10px; border-radius: 10px; }
+
+        /* Countdown Style */
+        #countdown {
+            margin-top: 5px;
+            font-size: 0.85rem;
+            color: #777;
+            font-weight: 600;
+        }
+
+        /* Typewriter Cursor */
+        .typing::after { content: '|'; animation: blink 0.7s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .heart-seal {
+            position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 45px; z-index: 35; transition: opacity 0.3s;
+        }
+
+        .open .heart-seal { opacity: 0; }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="https://files.catbox.moe/tzmxqj.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="envelope-wrapper" id="envelope" onclick="openEnvelope()">
+        <div class="heart-seal">❤️</div>
+        <div class="envelope-flap"></div>
+        <div class="envelope-front"></div>
+        
+        <div class="letter" id="letter">
+            <div id="ask">
+                <h1>Aly, will you be my Valentine?</h1>
+                <div class="btn-group">
+                    <button id="yesBtn" onclick="celebrate(event)">YES!</button>
+                    <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()" ontouchstart="moveButton()">No</button>
+                </div>
+            </div>
+            <div id="success" class="hidden">
+                <h1 style="font-size: 2.5rem;">YEY! ❤️</h1>
+                <p id="typewriter" class="typing" style="margin: 10px 0;"></p>
+                <img src="https://media.tenor.com/HVXteVlqBlcAAAAi/peach-and-goma-peach-goma.gif" alt="Cute Bears" class="cute-gif">
+                <div id="countdown"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // HEART TRAIL EFFECT
+        document.addEventListener('touchstart', (e) => {
+            for(let i=0; i<2; i++) {
+                createCursorHeart(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        });
+
+        function createCursorHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.className = 'cursor-heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = (x + (Math.random()-0.5)*30) + 'px';
+            heart.style.top = (y + (Math.random()-0.5)*30) + 'px';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1000);
+        }
+
+        // PARTICLES
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-particle');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 15 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+        setInterval(createHeart, 450);
+
+        function openEnvelope() {
+            const env = document.getElementById('envelope');
+            const music = document.getElementById('bgMusic');
+            music.volume = 0.2;
+            if (!env.classList.contains('open')) {
+                env.classList.add('open');
+                music.play().catch(e => console.log("Music play blocked"));
+            }
+        }
+
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            btn.style.position = 'fixed';
+            btn.style.zIndex = '999999';
+            const padding = 50;
+            let newX = Math.random() * (window.innerWidth - btn.offsetWidth - (padding * 2)) + padding;
+            let newY = Math.random() * (window.innerHeight - btn.offsetHeight - (padding * 2)) + padding;
+            btn.style.left = `${newX}px`;
+            btn.style.top = `${newY}px`;
+        }
+
+        // TYPEWRITER EFFECT
+        function startTypewriter() {
+            const text = "I love you so much 🫂";
+            let i = 0;
+            const speed = 100;
+            const target = document.getElementById("typewriter");
+            function type() {
+                if (i < text.length) {
+                    target.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    target.classList.remove("typing");
+                }
+            }
+            type();
+        }
+
+        // COUNTDOWN EFFECT
+        function startCountdown() {
+            const targetDate = new Date("Feb 14, 2026 00:00:00").getTime();
+            const countdownEl = document.getElementById("countdown");
+            
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+                countdownEl.innerHTML = `Counting down to your Birthday: ${days}d ${hours}h ${minutes}m`;
+
+                if (distance < 0) {
+                    clearInterval(timer);
+                    countdownEl.innerHTML = "Happy Valentine's Day! ❤️";
+                }
+            }, 1000);
+        }
+
+        function celebrate(event) {
+            event.stopPropagation();
+            document.getElementById('ask').classList.add('hidden');
+            document.getElementById('success').classList.remove('hidden');
+            
+            startTypewriter();
+            startCountdown();
+
+            confetti({
+                particleCount: 150, spread: 70, origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ff758f', '#ffb3c1']
+            });
+        }
+    </script>
+</body>
+</html>
